@@ -75,6 +75,10 @@ void Game::processEvents()
 		{
 			processKeys(newEvent);
 		}
+		if (sf::Event::MouseButtonReleased == newEvent.type)
+		{
+			processMouse(newEvent);
+		}
 	}
 }
 
@@ -91,6 +95,36 @@ void Game::processKeys(sf::Event t_event)
 	}
 }
 
+void Game::processMouse(sf::Event t_event)
+{
+	float length = 0.0f;
+	sf::Vector2f displacement;
+
+	if (sf::Mouse::Left == t_event.mouseButton.button)
+	{
+		m_target = sf::Vector2f(t_event.mouseButton.x, t_event.mouseButton.y);
+		displacement.x = static_cast<float>(t_event.mouseButton.x) - m_location.x;
+		displacement.y = static_cast<float>(t_event.mouseButton.y) - m_location.y;
+		length = std::sqrtf((displacement.x * displacement.x) + (displacement.y * displacement.y));
+		displacement = displacement / length;
+		m_velocity = displacement;
+		m_velocity = m_velocity * m_speed;
+		m_increment = 0.79;
+		if (static_cast<float>(t_event.mouseButton.x) > m_location.x)
+		{
+			m_facing = Direction::Right;
+			m_helicopter.setScale(1.0f, 1.0f);
+		}
+		else
+		{
+			m_facing = Direction::Left;
+			m_helicopter.setScale(-1.0, 1.0f);
+		}
+		
+	}
+
+}
+
 /// <summary>
 /// Update the game world
 /// </summary>
@@ -102,6 +136,7 @@ void Game::update(sf::Time t_deltaTime)
 		m_window.close();
 	}
 	animateHelo();
+	move();
 }
 
 /// <summary>
@@ -127,6 +162,25 @@ void Game::animateHelo()
 		m_helicopter.setTextureRect(sf::IntRect(0, 64 * m_currentFrame, 180, 64));
 	}
 
+}
+
+void Game::move()
+{
+	if (m_facing != Direction::None)
+	{
+		m_location += m_velocity;
+		m_helicopter.setPosition(m_location);
+		if (m_facing == Direction::Right && m_location.x > m_target.x)
+		{
+			m_facing = Direction::None;
+			m_increment = 0.28;
+		}
+		if (m_facing == Direction::Left && m_location.x < m_target.x)
+		{
+			m_facing = Direction::None;
+			m_increment = 0.28;
+		}
+	}
 }
 
 /// <summary>
@@ -162,6 +216,6 @@ void Game::setupSprite()
 	m_helicopter.setTexture(m_heliTexture);
 	m_helicopter.setTextureRect(sf::IntRect(0, 192, 180, 64));
 	m_helicopter.setPosition(300.0f, 180.0f);
-	m_helicopter.setOrigin(0.0f, 0.0f);
+	m_helicopter.setOrigin(90.0f, 32.0f);
 
 }
