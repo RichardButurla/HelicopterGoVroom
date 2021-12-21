@@ -26,7 +26,8 @@ private:
 	void processKeys(sf::Event t_event);
 	void update(sf::Time t_deltaTime);
 	void render();
-	
+	void animateHelo();
+
 	void setupFontAndText();
 	void setupSprite();
 
@@ -36,6 +37,9 @@ private:
 	sf::Texture m_heliTexture;
 	sf::Sprite m_helicopter;
 	bool m_exitGame; // control exiting game
+	float m_increment = 0.2f;
+	float m_frameCounter = 0.0f;
+	int m_currentFrame = 0; //0,1,2,3
 
 };
 

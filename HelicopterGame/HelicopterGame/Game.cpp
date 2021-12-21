@@ -101,6 +101,7 @@ void Game::update(sf::Time t_deltaTime)
 	{
 		m_window.close();
 	}
+	animateHelo();
 }
 
 /// <summary>
@@ -112,6 +113,20 @@ void Game::render()
 	m_window.draw(m_welcomeMessage);
 	m_window.draw(m_helicopter);
 	m_window.display();
+}
+
+void Game::animateHelo()
+{
+	int newFrame = 0;
+	m_frameCounter += m_increment;
+	newFrame = static_cast<int>(m_frameCounter);
+	newFrame = newFrame % 4;
+	if (newFrame != m_currentFrame)
+	{
+		m_currentFrame = newFrame;
+		m_helicopter.setTextureRect(sf::IntRect(0, 64 * m_currentFrame, 180, 64));
+	}
+
 }
 
 /// <summary>
@@ -145,5 +160,8 @@ void Game::setupSprite()
 		std::cout << "problem loading helicopter" << std::endl;
 	}
 	m_helicopter.setTexture(m_heliTexture);
+	m_helicopter.setTextureRect(sf::IntRect(0, 192, 180, 64));
 	m_helicopter.setPosition(300.0f, 180.0f);
+	m_helicopter.setOrigin(0.0f, 0.0f);
+
 }
